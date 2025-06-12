@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+
+enum TransactionType {
+  credit
+  debit
+}
+
+enum Status {
+  Pending
+  Cleared
+}
+
+enum IncomeCategory {
+  salary
+  investments
+  others
+}
+
+enum ExpensesCategory {
+  rent
+  food
+  utilities
+  transportation
+}
+
+model User {
+  id       String   @id @default(uuid())
+  name     String
+  email    String   @unique
+  password String
+  createdAt DateTime @default(now())
+  transactions Transaction[]
+  loans Loan[]
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [id], references: [id])
+  userId    String
+  amount    Float
+  type      TransactionType
+  category  String
+  note      String?
+  date      DateTime @default(now())
+  TransactionStatus Status  @default(Pending)
+}
+
+model Loan {
+  id String @id @default(uuid())
+  user User @relation(fields: [id], references: [id])
+  loanProvider String
+  amount Float
+  loanStatus Status @default(Pending)
+}
+
+model Income {
+  id String @id @default(uuid())
+  amount Float
+  incomeType IncomeCategory @default(salary)
+  createdAt DateTime @default(now())
+}
+
+model Expense {
+  id String @id @default(uuid())
+  amount Float
+  createdAt DateTime @default(now())
+  expenseType ExpensesCategory @default(food)
+}
+

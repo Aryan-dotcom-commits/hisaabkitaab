@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, {useEffect} from "react";
 import {IncomeForm, ExpenseForm }from "@/components/TransactionForms";
 
 const Dashboard = () => {
@@ -17,7 +17,28 @@ const Dashboard = () => {
     {
       setDisplayForm(<ExpenseForm />);
     }
+
+    if (e.target.value === "View") 
+    {
+      setDisplayForm(<div className="text-gray-600">Transaction viewing functionality will be implemented here.</div>);
+    }
   }
+
+  useEffect(() => {
+    const fetchTransactions = async() => {
+      const response = await fetch('/api/userTransaction', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+        
+      })
+      const body = await response.json();
+      console.log(body);
+    }
+
+    fetchTransactions();
+  }, []);
 
   return (
     <section className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-900 p-6">
@@ -26,7 +47,10 @@ const Dashboard = () => {
         Here you can manage your income, expenses, and track your financial goals.
       </p>
       <div className="flex flex-wrap gap-4">
-        <button className="bg-gray-800 text-white px-5 py-2 rounded-md shadow hover:bg-gray-700 transition">
+        <button className="bg-gray-800 text-white px-5 py-2 rounded-md shadow hover:bg-gray-700 transition"
+          value={"View"}
+          onClick={clickForm}
+        >
           View Transactions
         </button>
         <button
